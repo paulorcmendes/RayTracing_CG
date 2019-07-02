@@ -36,25 +36,26 @@ def rayTrace(p0, p1, faces):
 
 print("Hello World")
 
-vertices, normals, faces = loadObj.readObj("Charizard.obj")
+vertices, normals, faces = loadObj.readObj("LowPolyTree.obj")
 
 new_faces = []
+print("Faces antes: "+str(len(faces)))
 
 for face in faces:
 	if face.normals[0].z < 0:
 		new_faces.append(face)
 faces = new_faces
+print("Faces depois: "+str(len(faces)))
+lin = 150
+cols = 100
 
-lin = 200
-cols = 200
-
-COP = Vec3(0,0,-50)
-xmin = -2
-ymin = -2
-xmax = 2
+COP = Vec3(0,0.5,-3)
+xmin = -1
+ymin = -1
+xmax = 1
 ymax = 2
 
-dist = -45
+dist = -2
 width = (xmax-xmin)/cols
 height = (ymax-ymin)/lin
 
