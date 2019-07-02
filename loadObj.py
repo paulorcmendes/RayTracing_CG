@@ -1,3 +1,5 @@
+import numpy as np
+
 class Vec3(object):
 	"""docstring for Vec3"""
 	def __init__(self, x, y, z):
@@ -22,11 +24,10 @@ class Face(object):
 
 def readObj(file_name):
 	faces = []
+	vertices = []
+	normals = []
 	with open(file_name) as file:
 		lines = file.read().split('\n')	
-		#print(lines)
-		vertices = []
-		normals = []	
 
 		for line in lines:
 			content = line.split(' ')
@@ -47,6 +48,26 @@ def readObj(file_name):
 					f_vertices.append(vertices[v_index])
 					f_normals.append(normals[n_index])
 				faces.append(Face(f_vertices, f_normals))
-		for face in faces:
-			print(face.toString())
-	return faces
+		
+	return vertices, normals, faces
+
+def vectorialProd(u, v):
+	return u.x*v.x+u.y*v.y+u.z*v.z
+
+def norma(u):
+	return np.sqrt((u.x**2)+(u.y**2)+(u.z**2))
+
+def sub(u, v):
+	return Vec3(u.x-v.x, u.y-v.y, u.z-v.z)
+
+def angulo(u, v):
+	cos = vectorialProd(u, v)/(norma(u)*norma(v))
+	ang = np.arccos(cos)
+	
+	ang = ang*180/np.pi
+
+	#if(ang > 180):
+	#	ang = 360 - ang
+	return ang
+
+
