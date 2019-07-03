@@ -4,6 +4,10 @@ import numpy as np
 import loadObj
 from loadObj import *
 		
+
+luzAmbiente = [1,1,1]
+
+
 def rayTrace(p0, p1, faces):
 
 	#vetor u
@@ -27,12 +31,15 @@ def rayTrace(p0, p1, faces):
 				vet2 = sub(face.vertices[i_next], p_plano)
 				ang += angulo(vet1, vet2)
 			#print(ang)
+			#ponto esta na face
 			if(abs(360-ang) < 2):
-				return 1
+				k_reflex = [0, 0.2, 1]
+
+				return k_reflex[0]*luzAmbiente[0], k_reflex[1]*luzAmbiente[1], k_reflex[2]*luzAmbiente[2]
 
 			#print(p_plano.toString())
 
-	return 0		
+	return 0,0,0		
 
 print("Hello World")
 
@@ -59,14 +66,17 @@ dist = -2
 width = (xmax-xmin)/cols
 height = (ymax-ymin)/lin
 
-image = np.zeros((lin, cols))
+image = np.zeros((lin, cols, 3))
 
 for i in range(lin):
 	print(i)
 	for j in range(cols):
 		p0 = COP
 		p1 = Vec3(xmin+width*(j+0.5), ymax-height*(i+0.5), dist)
-		image[i,j] = rayTrace(p0, p1, faces)
+		blue, red, green  = rayTrace(p0, p1, faces)
+		image[i,j, 0] = blue*255
+		image[i,j, 1] = red*255
+		image[i,j, 2] = green*255
 
 print(image)
 cv2.imshow('image',image)
