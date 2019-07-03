@@ -11,11 +11,11 @@ def rayTrace(p0, p1, faces, COP):
 
 	#vetor u
 	raio = Vec3(p1.x-p0.x, p1.y-p0.y, p1.z-p0.z)
-	norm = norma(raio)
-	raio = Vec3(raio.x/norm, raio.y/norm, raio.z/norm)
-	'''
+	raio = normaliza(raio)
+	
 	normal_prox = None
 	menor_z = None
+	
 	for face in faces:
 		normal_plano = face.normals[0]
 		#ha intersecao
@@ -65,22 +65,23 @@ def rayTrace(p0, p1, faces, COP):
 		t0 = t1
 	t = t0
 	normal_prox = Vec3(p0.x+t*raio.x, p0.y+t*raio.y, p0.z+t*raio.z) 	
-	
+	'''
+
 	ka_reflex = [0, 0.5, 0.0]
 	kd_reflex = [0, 0.5, 0.0]
 	ks_reflex = [0, 0.5, 0.0]
 
-	vetDifusa = Vec3(-1,1,-2)
+	vetDifusa = Vec3(1,1,-3)
 
 	normal_prox = normaliza(normal_prox)
 	vetDifusa = normaliza(vetDifusa)
 	COP = normaliza(COP)
-	
+
 	nvl = np.power(2*vectorialProd(normal_prox, vetDifusa)*vectorialProd(normal_prox, COP)-vectorialProd(COP, vetDifusa), m)
 
 
 	normal_luz = vectorialProd(normal_prox, vetDifusa)
-	print(nvl)
+	#print(nvl)
 	blue = ka_reflex[0]*luzAmbiente[0]*normal_luz+luzAmbiente[0]*nvl
 	green = ka_reflex[1]*luzAmbiente[1]*normal_luz+luzAmbiente[1]*nvl
 	red = ka_reflex[2]*luzAmbiente[2]*normal_luz+luzAmbiente[2]*nvl
@@ -101,8 +102,8 @@ for face in faces:
 		new_faces.append(face)
 faces = new_faces
 print("Faces depois: "+str(len(faces)))
-lin = 360
-cols = 240
+lin = 150
+cols = 100
 
 COP = Vec3(0,0,-3)
 xmin = -1
@@ -117,6 +118,7 @@ height = (ymax-ymin)/lin
 image = np.zeros((lin, cols, 3))
 
 for i in range(lin):
+	print(i)
 	for j in range(cols):
 		p0 = COP
 		p1 = Vec3(xmin+width*(j+0.5), ymax-height*(i+0.5), dist)
@@ -129,6 +131,6 @@ for i in range(lin):
 		image[i,j, 2] = red
 
 print(image)
-cv2.imshow('image',image)
+cv2.imshow('arvore.jpg',image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
