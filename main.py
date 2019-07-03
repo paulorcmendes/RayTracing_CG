@@ -11,7 +11,9 @@ def rayTrace(p0, p1, faces, COP):
 
 	#vetor u
 	raio = Vec3(p1.x-p0.x, p1.y-p0.y, p1.z-p0.z)
-
+	norm = norma(raio)
+	raio = Vec3(raio.x/norm, raio.y/norm, raio.z/norm)
+	'''
 	normal_prox = None
 	menor_z = None
 	for face in faces:
@@ -42,30 +44,50 @@ def rayTrace(p0, p1, faces, COP):
 
 	if normal_prox == None:
 		return 0,0,0
+	'''
+	orig = p0
+	center = Vec3(0,0,0)
+	radius2 = np.power(1, 2)
+	L = sub(orig, center)
+	a = vectorialProd(raio, raio)
+	b = 2*vectorialProd(raio, L)
+	c = vectorialProd(L, L) - radius2
 
-	ka_reflex = [0, 0.8, 0.0]
-	kd_reflex = [0, 0.8, 0.0]
-	ks_reflex = [0, 0.8, 0.0]
+	intersepta, t0, t1 = solveQuadratic(a, b, c)
+	if(not intersepta):
+		return 0,0,0
 
-	vetDifusa = Vec3(3,1,0)
+	if(t0 > t1):
+		aux = t0
+		t0 = t1
+		t1 = aux
+	if(t0 < 0):
+		t0 = t1
+	t = t0
+	normal_prox = Vec3(p0.x+t*raio.x, p0.y+t*raio.y, p0.z+t*raio.z) 	
+	
+	ka_reflex = [0, 0.5, 0.0]
+	kd_reflex = [0, 0.5, 0.0]
+	ks_reflex = [0, 0.5, 0.0]
 
+	vetDifusa = Vec3(-1,1,-2)
+
+	normal_prox = normaliza(normal_prox)
+	vetDifusa = normaliza(vetDifusa)
+	COP = normaliza(COP)
+	
 	nvl = np.power(2*vectorialProd(normal_prox, vetDifusa)*vectorialProd(normal_prox, COP)-vectorialProd(COP, vetDifusa), m)
+
+
 	normal_luz = vectorialProd(normal_prox, vetDifusa)
-	blue = ka_reflex[0]*luzAmbiente[0]*normal_luz+ka_reflex[0]*luzAmbiente[0]*nvl
-	green = ka_reflex[1]*luzAmbiente[1]*normal_luz+ka_reflex[1]*luzAmbiente[1]*nvl
-	red = ka_reflex[2]*luzAmbiente[2]*normal_luz+ka_reflex[2]*luzAmbiente[2]*nvl
+	print(nvl)
+	blue = ka_reflex[0]*luzAmbiente[0]*normal_luz+luzAmbiente[0]*nvl
+	green = ka_reflex[1]*luzAmbiente[1]*normal_luz+luzAmbiente[1]*nvl
+	red = ka_reflex[2]*luzAmbiente[2]*normal_luz+luzAmbiente[2]*nvl
 
 	return blue, green, red 			
 
-def preencheLinha(i, lin, cols, COP, xmin, ymin, xmax, ymax, image, dist, width, height):
-	print(i)
-	for j in range(cols):
-		p0 = COP
-		p1 = Vec3(xmin+width*(j+0.5), ymax-height*(i+0.5), dist)
-		blue, green, red  = rayTrace(p0, p1, faces, COP)
-		image[i,j, 0] = blue*255
-		image[i,j, 1] = green*255
-		image[i,j, 2] = red*255
+	
 
 print("Hello World")
 
@@ -95,7 +117,16 @@ height = (ymax-ymin)/lin
 image = np.zeros((lin, cols, 3))
 
 for i in range(lin):
-	preencheLinha(i, lin, cols, COP, xmin, ymin, xmax, ymax, image, dist, width, height)
+	for j in range(cols):
+		p0 = COP
+		p1 = Vec3(xmin+width*(j+0.5), ymax-height*(i+0.5), dist)
+		blue, green, red  = rayTrace(p0, p1, faces, COP)
+
+		#if(green> 0):
+			#print(green)
+		image[i,j, 0] = blue	
+		image[i,j, 1] = green
+		image[i,j, 2] = red
 
 print(image)
 cv2.imshow('image',image)

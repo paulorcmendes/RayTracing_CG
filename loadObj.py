@@ -70,4 +70,33 @@ def angulo(u, v):
 	#	ang = 360 - ang
 	return ang
 
+def solveQuadratic(a, b, c):
+ 
+    discr = b * b - 4 * a * c; 
+    if (discr < 0):
+    	return False, 0, 0
+    elif (discr == 0):
+    	x0 = - 0.5 * b / a; 
+    	x1 = x0
+    else: 
+
+        if(b > 0):
+        	q = -0.5 * (b + np.sqrt(discr))
+        else :
+        	q = -0.5 * (b - np.sqrt(discr))
+
+        x0 = q / a; 
+        x1 = c / q; 
+    
+    if (x0 > x1):
+    	aux = x0
+    	x0 = x1
+    	x1 = aux
+
+ 
+    return True, x0, x1
+
+def normaliza(vet):
+	norm = norma(vet)
+	return Vec3(vet.x/norm, vet.y/norm, vet.z/norm)
 
